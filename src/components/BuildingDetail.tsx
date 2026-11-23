@@ -2,7 +2,10 @@
 
 import Image from "next/image";
 import { BuildingSilhouetteShape } from "@/components/BuildingSilhouette";
+import { urlForCutout } from "@/sanity/lib/image";
 import { CLUSTER_LABELS, type Building } from "@/types/building";
+
+const DETAIL_CUTOUT_WIDTH_PX = 96;
 
 type BuildingDetailProps = {
   building: Building | null;
@@ -36,12 +39,15 @@ export function BuildingDetail({
         <div className="mx-auto max-w-5xl px-4 py-5 sm:px-6 sm:py-6">
           <div className="operator-detail__plate grid gap-5 p-4 sm:grid-cols-[minmax(0,120px)_1fr] sm:items-start sm:p-5">
             <div className="relative mx-auto flex h-32 w-24 items-end justify-center text-[var(--steel)] md:mx-0">
-              {building.imageSrc ? (
+              {building.cutout ? (
                 <Image
-                  src={building.imageSrc}
+                  src={urlForCutout(building.cutout, {
+                    width: DETAIL_CUTOUT_WIDTH_PX,
+                  }).url()}
                   alt={building.name}
                   width={112}
                   height={144}
+                  sizes={`${DETAIL_CUTOUT_WIDTH_PX}px`}
                   className="skyline-cutout h-full w-full object-contain object-bottom"
                   unoptimized
                 />

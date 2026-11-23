@@ -6,7 +6,6 @@ import type {
 } from "@/types/building";
 import { buildings as fallbackBuildings } from "@/data/buildings";
 import { client } from "@/sanity/lib/client";
-import { urlForCutout } from "@/sanity/lib/image";
 import { BUILDINGS_QUERY } from "@/sanity/lib/queries";
 import { projectId } from "@/sanity/env";
 
@@ -40,8 +39,7 @@ type SanityBuilding = {
 };
 
 function mapBuilding(doc: SanityBuilding): Building {
-  const imageSrc =
-    doc.cutout?.asset != null ? urlForCutout(doc.cutout).url() : undefined;
+  const cutout = doc.cutout?.asset != null ? doc.cutout : undefined;
 
   return {
     id: doc.id,
@@ -61,7 +59,7 @@ function mapBuilding(doc: SanityBuilding): Building {
     silhouette: doc.silhouette ?? "rect",
     shortBlurb: doc.shortBlurb,
     wikipediaUrl: doc.wikipediaUrl,
-    imageSrc,
+    cutout,
     cutoutAspect: doc.cutoutAspect ?? undefined,
   };
 }

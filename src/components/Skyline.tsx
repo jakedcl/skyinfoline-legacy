@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { urlForCutout } from "@/sanity/lib/image";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   BuildingSilhouetteShape,
@@ -75,7 +76,7 @@ function towerSize(
     (building.heightFt / tallest) * skylineMaxPx,
   );
 
-  const hasCutout = Boolean(building.imageSrc);
+  const hasCutout = Boolean(building.cutout);
   const aspect =
     measuredAspect ??
     building.cutoutAspect ??
@@ -335,12 +336,15 @@ export function Skyline({
                       {building.name}
                     </span>
 
-                    {building.imageSrc ? (
+                    {building.cutout ? (
                       <Image
-                        src={building.imageSrc}
+                        src={urlForCutout(building.cutout, { width: widthPx }).url()}
                         alt=""
                         width={widthPx > 0 ? widthPx * 2 : 96}
                         height={heightPx > 0 ? heightPx * 2 : 128}
+                        sizes={
+                          widthPx > 0 ? `${Math.ceil(widthPx)}px` : "48px"
+                        }
                         className={[
                           "skyline-cutout block h-full w-full",
                           selected ? "skyline-cutout--selected" : "",
