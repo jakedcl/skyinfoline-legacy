@@ -145,7 +145,7 @@ export const buildingType = defineType({
       type: "image",
       description:
         "Upload a transparent PNG of the building only. Used on the skyline; silhouette is the fallback.",
-      options: { hotspot: false },
+      options: { hotspot: true },
       fields: [
         defineField({
           name: "alt",
