@@ -1,3 +1,5 @@
+import type { SanityImageSource } from "@sanity/image-url";
+
 export type BuildingStatus =
   | "completed"
   | "under-construction"
@@ -40,7 +42,9 @@ export type Building = {
    * Higher = stronger visual presence on the skyline.
    */
   skylineImportance?: number;
-  /** e.g. "/buildings/empire-state.png" — transparent PNG preferred */
+  /** Sanity cutout image (sized at render time via urlForCutout). */
+  cutout?: SanityImageSource;
+  /** Legacy static path when not from Sanity */
   imageSrc?: string;
   /** PNG width ÷ height — used so cutouts fill their height slot without letterboxing */
   cutoutAspect?: number;

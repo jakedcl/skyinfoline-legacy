@@ -11,6 +11,7 @@ export default defineConfig({
   projectId,
   dataset,
   basePath: "/studio",
+  announcements: { enabled: false },
   releases: { enabled: false },
   scheduledDrafts: { enabled: false },
   tasks: { enabled: false },
