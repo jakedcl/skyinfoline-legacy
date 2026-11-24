@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { BuildingSilhouetteShape } from "@/components/BuildingSilhouette";
 import { urlForCutout } from "@/sanity/lib/image";
 import { CLUSTER_LABELS, type Building } from "@/types/building";
@@ -24,6 +25,16 @@ export function BuildingDetail({
   canPrevious = false,
   canNext = false,
 }: BuildingDetailProps) {
+  const [copied, setCopied] = useState(false);
+  const share = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      /* clipboard unavailable */
+    }
+  };
   return (
     <aside
       className={[
@@ -37,7 +48,7 @@ export function BuildingDetail({
     >
       {building ? (
         <div className="mx-auto max-w-5xl px-4 py-5 sm:px-6 sm:py-6">
-          <div className="operator-detail__plate grid gap-5 p-4 sm:grid-cols-[minmax(0,120px)_1fr] sm:items-start sm:p-5">
+          <div className="operator-detail__plate grid gap-5 sm:grid-cols-[minmax(0,120px)_1fr] sm:items-start">
             <div className="relative mx-auto flex h-32 w-24 items-end justify-center text-[var(--steel)] md:mx-0">
               {building.cutout ? (
                 <Image
@@ -73,46 +84,27 @@ export function BuildingDetail({
                       .filter(Boolean)
                       .join(" · ") || "Manhattan"}
                   </p>
-                  <h2 className="mt-1 text-2xl font-semibold tracking-tight text-[var(--op-ink)] md:text-3xl">
+                  <h2 className="mt-1 text-2xl font-semibold tracking-tight text-white md:text-3xl">
                     {building.name}
                   </h2>
                   {building.nicknames?.length ? (
-                    <p className="mt-1 text-sm text-[var(--op-muted)]">
+                    <p className="mt-1 text-sm text-white/60">
                       Also known as {building.nicknames.join(", ")}
                     </p>
                   ) : null}
                 </div>
-                <div className="relative z-10 flex shrink-0 flex-wrap items-center justify-end gap-1.5">
-                  <div
-                    className="operator-detail__neighbors"
-                    role="group"
-                    aria-label="Building navigation"
-                  >
-                    <button
-                      type="button"
-                      onClick={onPrevious}
-                      disabled={!canPrevious || !onPrevious}
-                      className="operator-detail__nav px-2.5 py-1.5 text-[10px] font-bold tracking-[0.14em] uppercase"
-                      aria-label="Previous building"
-                    >
-                      ← Prev
-                    </button>
-                    <button
-                      type="button"
-                      onClick={onNext}
-                      disabled={!canNext || !onNext}
-                      className="operator-detail__nav px-2.5 py-1.5 text-[10px] font-bold tracking-[0.14em] uppercase"
-                      aria-label="Next building"
-                    >
-                      Next →
-                    </button>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="operator-detail__close px-3 py-1.5 text-[10px] font-bold tracking-[0.16em] uppercase"
-                  >
-                    Close
+                <div className="relative z-10 flex shrink-0 items-center gap-1.5">
+                  <button type="button" onClick={onPrevious} disabled={!canPrevious || !onPrevious} className="icon-btn" aria-label="Previous building" title="Previous (←)">
+                    ←
+                  </button>
+                  <button type="button" onClick={onNext} disabled={!canNext || !onNext} className="icon-btn" aria-label="Next building" title="Next (→)">
+                    →
+                  </button>
+                  <button type="button" onClick={share} className="pill" aria-live="polite">
+                    {copied ? "Link copied" : "Share"}
+                  </button>
+                  <button type="button" onClick={onClose} className="icon-btn" aria-label="Close details" title="Close (Esc)">
+                    ✕
                   </button>
                 </div>
               </div>
@@ -157,7 +149,7 @@ export function BuildingDetail({
               </dl>
 
               {building.shortBlurb ? (
-                <p className="mt-4 max-w-2xl text-[14px] leading-relaxed text-[var(--op-ink)]/85">
+                <p className="mt-4 max-w-2xl text-[14px] leading-relaxed text-white/80">
                   {building.shortBlurb}
                 </p>
               ) : null}
@@ -169,7 +161,7 @@ export function BuildingDetail({
                   rel="noopener noreferrer"
                   className="mt-3 inline-block text-xs font-bold tracking-[0.14em] text-[var(--op-signal)] uppercase underline-offset-4 hover:underline"
                 >
-                  Spec sheet →
+                  Read more →
                 </a>
               ) : null}
             </div>

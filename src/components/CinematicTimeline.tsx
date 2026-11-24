@@ -11,6 +11,8 @@ type CinematicTimelineProps = {
   /** Leave era-filter mode and restore year scrubbing (keep last scrub year). */
   onResumeTimeline: () => void;
   onEraSelect: (eraId: string) => void;
+  playing?: boolean;
+  onTogglePlay?: () => void;
 };
 
 export function CinematicTimeline({
@@ -21,6 +23,8 @@ export function CinematicTimeline({
   onChange,
   onResumeTimeline,
   onEraSelect,
+  playing = false,
+  onTogglePlay,
 }: CinematicTimelineProps) {
   const filtering = eraFilterIds.length > 0;
   const eraFilters = erasByIds(eraFilterIds);
@@ -40,12 +44,12 @@ export function CinematicTimeline({
   const progressWidth = ((value - min) / (max - min || 1)) * 100;
 
   return (
-    <div className="operator-deck__plate mx-auto w-full max-w-5xl px-4 py-4 sm:px-5 sm:py-5">
+    <div className="operator-deck__plate mx-auto w-full max-w-5xl">
       {/* Era breakers — multi-select toggles */}
       <div
         className="flex flex-wrap gap-2 sm:gap-2.5"
         role="group"
-        aria-label="Era circuit filters"
+        aria-label="Filter by era"
       >
         {visibleEras.map((e) => {
           const filtered = eraFilterIds.includes(e.id);
@@ -54,13 +58,10 @@ export function CinematicTimeline({
               key={e.id}
               type="button"
               onClick={() => onEraSelect(e.id)}
-              className={["operator-breaker", filtered ? "is-active" : ""].join(
-                " ",
-              )}
+              className="pill"
               aria-pressed={filtered}
             >
-              <span className="operator-breaker__toggle" aria-hidden />
-              <span className="operator-breaker__label">{e.label}</span>
+              {e.label}
             </button>
           );
         })}
@@ -71,11 +72,11 @@ export function CinematicTimeline({
           {filterTitle ?? displayEra.label}
         </span>
         {filtering ? (
-          <span className="ml-2 text-[9px] tracking-[0.14em] text-[#8a98a6] uppercase">
+          <span className="ml-2 text-[9px] tracking-[0.14em] text-white/50 uppercase">
             filtered
           </span>
         ) : null}
-        <span className="mx-1.5 text-[#5c6670]">—</span>
+        <span className="mx-1.5 text-white/30">—</span>
         <span>
           {eraFilters.length <= 1
             ? displayEra.tagline
@@ -86,6 +87,26 @@ export function CinematicTimeline({
       {/* DIN-rail year scrubber — inactive while era filters are on */}
       <div className="operator-rail">
         <div className="flex items-center gap-3 sm:gap-4">
+          {onTogglePlay ? (
+            <button
+              type="button"
+              className="icon-btn"
+              onClick={onTogglePlay}
+              aria-label={playing ? "Pause timeline" : "Play skyline history"}
+              title={playing ? "Pause" : "Play history"}
+            >
+              {playing ? (
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden>
+                  <rect x="2" y="1" width="3.5" height="12" rx="1" />
+                  <rect x="8.5" y="1" width="3.5" height="12" rx="1" />
+                </svg>
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden>
+                  <path d="M3 1.5v11l9-5.5z" />
+                </svg>
+              )}
+            </button>
+          ) : null}
           <p
             className="operator-rail__year"
             aria-live="polite"
